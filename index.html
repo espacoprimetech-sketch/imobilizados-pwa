@@ -10,7 +10,6 @@
 <link rel="manifest" href="manifest.json">
 <title>Formulário 2118 – Controle Imobilizados</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <style>
 :root{
   --bg:#0a0a0f;--bg2:#111118;--bg3:#1a1a25;--card:#14141e;
@@ -172,14 +171,13 @@ nav::-webkit-scrollbar{display:none}
 .scanner-header{padding:14px 16px;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.8)}
 .scanner-header h2{flex:1;font-size:15px;font-weight:700}
 .scanner-close{width:34px;height:34px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--text)}
-/* Container ideal para a renderização limpa do Html5Qrcode */
-#scannerVideoContainer{width:100%;flex:1;background:#000;position:relative}
-.scanner-guide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;z-index:10}
+#scannerVideo{width:100%;flex:1;object-fit:cover}
+.scanner-guide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
 .scan-frame{width:260px;height:100px;border:2px solid var(--accent);border-radius:8px;box-shadow:0 0 0 9999px rgba(0,0,0,.55);position:relative}
 .scan-line{position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);animation:scanAnim 1.5s ease-in-out infinite}
 @keyframes scanAnim{0%{top:0}100%{top:calc(100% - 2px)}}
-.scan-frame-label{color:var(--accent);font-size:12px;font-family:var(--mono);margin-top:14px;letter-spacing:.5px;text-shadow:0 1px 4px #000}
-.scanner-result{position:absolute;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:14px 16px;display:none;z-index:20}
+.scan-frame-label{color:var(--accent);font-size:12px;font-family:var(--mono);margin-top:14px;letter-spacing:.5px}
+.scanner-result{position:absolute;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:14px 16px;display:none}
 .scanner-result.show{display:block}
 .scan-found{font-size:13px;font-weight:700;margin-bottom:8px;color:var(--accent)}
 .scan-asset-name{font-size:14px;font-weight:800;margin-bottom:4px}
@@ -241,6 +239,7 @@ nav::-webkit-scrollbar{display:none}
 <body>
 <div id="app">
 
+<!-- HEADER -->
 <header>
   <div class="logo">🏭</div>
   <div class="header-title">
@@ -253,6 +252,7 @@ nav::-webkit-scrollbar{display:none}
   </div>
 </header>
 
+<!-- TABS -->
 <nav id="tabs">
   <button class="tab active" onclick="switchTab('dashboard')">Dashboard</button>
   <button class="tab" onclick="switchTab('assets')">Ativos</button>
@@ -262,8 +262,10 @@ nav::-webkit-scrollbar{display:none}
   <button class="tab" onclick="switchTab('importar')">Importar</button>
 </nav>
 
+<!-- CONTENT -->
 <div id="content">
 
+  <!-- ══ DASHBOARD ══ -->
   <div class="view active" id="view-dashboard">
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-label">Total Ativos</div><div class="stat-value accent" id="stat-total">0</div></div>
@@ -288,6 +290,7 @@ nav::-webkit-scrollbar{display:none}
     <div id="recentList"></div>
   </div>
 
+  <!-- ══ ATIVOS ══ -->
   <div class="view" id="view-assets">
     <div class="search-box">
       <span class="search-icon">🔍</span>
@@ -308,11 +311,13 @@ nav::-webkit-scrollbar{display:none}
     <div id="assetList"></div>
   </div>
 
+  <!-- ══ CENTROS CC ══ -->
   <div class="view" id="view-centros">
     <div class="section-header"><h2>Centros de Custo</h2><span class="section-badge" id="ccBadge">0</span></div>
     <div id="centrosList"></div>
   </div>
 
+  <!-- ══ RELATÓRIO ══ -->
   <div class="view" id="view-relatorio">
     <div class="card" style="margin-bottom:12px">
       <div class="card-header">
@@ -327,6 +332,7 @@ nav::-webkit-scrollbar{display:none}
       </div>
     </div>
 
+    <!-- Assinatura -->
     <div class="sig-box">
       <label>Assinatura – Responsável Controladoria</label>
       <div class="sig-canvas-wrap">
@@ -345,9 +351,11 @@ nav::-webkit-scrollbar{display:none}
     <button class="btn-primary" onclick="gerarRelatorio()" style="margin-top:14px">🖨 Gerar &amp; Imprimir Relatório</button>
     <button class="btn-secondary" onclick="exportarCSV()">📊 Exportar CSV por CC</button>
 
+    <!-- Preview -->
     <div style="margin-top:14px" id="relPreview"></div>
   </div>
 
+  <!-- ══ ADICIONAR ══ -->
   <div class="view" id="view-adicionar">
     <div class="card" style="margin-bottom:12px">
       <div class="card-header">
@@ -410,6 +418,7 @@ nav::-webkit-scrollbar{display:none}
     <button class="btn-secondary" onclick="limparForm()">🗑 Limpar</button>
   </div>
 
+  <!-- ══ IMPORTAR ══ -->
   <div class="view" id="view-importar">
     <div class="email-card">
       <h3 style="font-size:13px;font-weight:700;margin-bottom:8px">📧 Importar via E-mail (Planilha xlsx)</h3>
@@ -443,23 +452,30 @@ nav::-webkit-scrollbar{display:none}
     </div>
   </div>
 
-</div><div class="bottom-nav">
+</div><!-- /content -->
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
   <button class="nav-btn active" onclick="switchTab('dashboard')" id="bnav-dashboard"><span class="nav-icon">📊</span>Painel</button>
   <button class="nav-btn" onclick="switchTab('assets')" id="bnav-assets"><span class="nav-icon">🏭</span>Ativos</button>
   <button class="nav-btn" onclick="switchTab('centros')" id="bnav-centros"><span class="nav-icon">📍</span>Centros</button>
   <button class="nav-btn" onclick="switchTab('relatorio')" id="bnav-relatorio"><span class="nav-icon">📋</span>Relat.</button>
   <button class="nav-btn" onclick="switchTab('adicionar')" id="bnav-adicionar"><span class="nav-icon">➕</span>Novo</button>
 </div>
-</div><div class="sheet-overlay" id="detailSheet" onclick="closeSheet(event)">
+</div><!-- /app -->
+
+<!-- DETAIL SHEET -->
+<div class="sheet-overlay" id="detailSheet" onclick="closeSheet(event)">
   <div class="sheet" id="sheetContent"><div id="sheetBody"></div></div>
 </div>
 
+<!-- BARCODE SCANNER -->
 <div class="scanner-overlay" id="scannerOverlay">
   <div class="scanner-header">
     <h2>📷 Leitura de Plaqueta</h2>
     <button class="scanner-close" onclick="closeScan()">✕</button>
   </div>
-  <div id="scannerVideoContainer"></div>
+  <video id="scannerVideo" autoplay playsinline muted></video>
   <div class="scanner-guide">
     <div class="scan-frame"><div class="scan-line"></div></div>
     <div class="scan-frame-label">Aponte para o código de barras da plaqueta</div>
@@ -475,12 +491,15 @@ nav::-webkit-scrollbar{display:none}
   </div>
 </div>
 
+<!-- CC EDIT SHEET -->
 <div class="sheet-overlay" id="ccEditSheet" onclick="closeCCSheet(event)">
   <div class="sheet" id="ccSheetContent"><div id="ccSheetBody"></div></div>
 </div>
 
+<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<!-- PRINT AREA (hidden, shown on print) -->
 <div id="printArea"></div>
 
 <script>
@@ -489,46 +508,19 @@ nav::-webkit-scrollbar{display:none}
 // ════════════════════════════════════
 let db = JSON.parse(localStorage.getItem('imob2118') || 'null') || {assets:[],centros:{},meta:{empresa:'2500',centro:'300',descCentro:'FRIG/IND FRG VDA',numSolicitacao:''}};
 let currentCC='ALL', currentStatus='ALL', currentSearch='';
-let scannedId=null;
+let scannedId=null, scanStream=null, scanInterval=null;
 let sigCtx=null, sigDrawing=false, sigHasData=false;
-
-// Instância global do gerenciador do leitor de código de barras
-let html5QrcodeScanner = null;
-
-// Dados mockados iniciais baseados no JSON fornecido
-const sampleAssets = [
-  {cc:'150',inventario:'400003',imobilizado:'500003',localiz:'ENRG01',descLocal:'Gestão Energia VDA',dtIncorp:'2019-08-20',nome:'MEDIDOR DE ENERGIA DIGIRAIL KRON',valor:4500,status:'Ativo',quantContada:0,obs:''},
-  {cc:'150',inventario:'400004',imobilizado:'500004',localiz:'ENRG01',descLocal:'Gestão Energia VDA',dtIncorp:'2020-02-14',nome:'GRUPO GERADOR DIESEL 250KVA STEMAC',valor:185000,status:'Ativo',quantContada:0,obs:''},
-  {cc:'146',inventario:'300001',imobilizado:'400001',localiz:'VPR01',descLocal:'Op. Gerenciamento de Vapor VDA',dtIncorp:'2013-03-10',nome:'CALDEIRA A VAPOR 4000KG/H HOVAL',valor:320000,status:'Ativo',quantContada:0,obs:''},
-  {cc:'146',inventario:'300002',imobilizado:'400002',localiz:'VPR01',descLocal:'Op. Gerenciamento de Vapor VDA',dtIncorp:'2013-03-10',nome:'BOMBA D AGUA ALIMENTAÇÃO CALDEIRA KSB',valor:12000,status:'Ativo',quantContada:0,obs:''},
-  {cc:'146',inventario:'300003',imobilizado:'400003',localiz:'VPR01',descLocal:'Op. Gerenciamento de Vapor VDA',dtIncorp:'2013-03-10',nome:'SUPERAQUECEDOR DE VAPOR ATOS',valor:45000,status:'Ativo',quantContada:0,obs:''}
-];
-
-const sampleCentros = {
-  '150': {codigo:'150', nome:'GESTÃO DE ENERGIA', desc:'Manutenção e controle de distribuição elétrica', responsavel:'', totalAtivos:2, valorTotal:189500},
-  '146': {codigo:'146', nome:'GERENCIAMENTO DE VAPOR', desc:'Geração de vapor predial e industrial', responsavel:'', totalAtivos:3, valorTotal:37700}
-};
-
-// Se o localStorage estiver vazio, popula automaticamente com os dados padrão da 2118
-if (db.assets.length === 0) {
-  db.assets = sampleAssets;
-  db.centros = sampleCentros;
-  localStorage.setItem('imob2118', JSON.stringify(db));
-}
 
 // ════════════════════════════════════
 // INIT
 // ════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
-  renderAll();
-  populateCCSelects();
+  renderAll(); populateCCSelects();
   initSig();
   if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 });
 
-function saveDB(){
-  localStorage.setItem('imob2118', JSON.stringify(db));
-}
+function saveDB(){ localStorage.setItem('imob2118', JSON.stringify(db)); }
 
 // ════════════════════════════════════
 // NAVIGATION
@@ -549,766 +541,659 @@ function switchTab(tab){
 // ════════════════════════════════════
 // RENDER ALL
 // ════════════════════════════════════
-function renderAll(){
-  renderDashboard();
-  renderAssets();
-  renderCentros();
-  updateCCChips();
-}
+function renderAll(){ renderDashboard(); renderAssets(); renderCentros(); updateCCChips(); }
 
-function fmtMoney(v){
-  return v?'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'R$ 0,00';
-}
-
-function fmtDate(d){
-  try{
-    return d?new Date(d).toLocaleDateString('pt-BR'):'—';
-  }catch{return'—';}
-}
+function fmtMoney(v){ return v?'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'R$ 0,00'; }
+function fmtDate(d){ try{ return d?new Date(d).toLocaleDateString('pt-BR'):'—'; }catch{return'—';} }
 
 // ════════════════════════════════════
 // DASHBOARD
 // ════════════════════════════════════
 function renderDashboard(){
   const total=db.assets.length;
-  const counted=db.assets.filter(a=>(a.quantContada || 0) > 0).length;
-  const pending=total - counted;
-  const missing=db.assets.filter(a=>a.status === 'Não Localizado').length;
-  
-  let valorTotalSum = db.assets.reduce((acc, a) => acc + (Number(a.valor) || 0), 0);
+  const counted=db.assets.filter(a=>a.quantFisica!==null&&a.quantFisica!==undefined&&a.quantFisica!=='').length;
+  const missing=db.assets.filter(a=>a.status==='Não Localizado').length;
+  const pending=total-counted;
+  const valorTotal=db.assets.reduce((s,a)=>s+(Number(a.valor)||0),0);
+  document.getElementById('stat-total').textContent=total;
+  document.getElementById('stat-counted').textContent=counted;
+  document.getElementById('stat-pending').textContent=pending;
+  document.getElementById('stat-missing').textContent=missing;
+  document.getElementById('stat-valor').textContent=fmtMoney(valorTotal);
+  const pct=total>0?Math.round((counted/total)*100):0;
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressLabel').textContent=`${counted} de ${total} ativos contados (${pct}%)`;
 
-  document.getElementById('stat-total').innerText = total;
-  document.getElementById('stat-counted').innerText = counted;
-  document.getElementById('stat-pending').innerText = pending;
-  document.getElementById('stat-missing').innerText = missing;
-  document.getElementById('stat-valor').innerText = fmtMoney(valorTotalSum);
-  
-  document.getElementById('progressLabel').innerText = `${counted} de ${total} ativos contados`;
-  const pct = total > 0 ? (counted / total) * 100 : 0;
-  document.getElementById('progressFill').style.width = pct + '%';
-
-  // Renderiza lista simplificada de CC no painel
-  const dashCC = document.getElementById('dashCCList');
-  dashCC.innerHTML = '';
-  
-  Object.keys(db.centros).forEach(key => {
-    const cc = db.centros[key];
-    const ativosDoCC = db.assets.filter(a => a.cc === cc.codigo);
-    const contadosDoCC = ativosDoCC.filter(a => (a.quantContada || 0) > 0).length;
-    
-    const div = document.createElement('div');
-    div.className = 'cc-item';
-    div.onclick = () => { currentCC = cc.codigo; switchTab('assets'); filterCC(cc.codigo); };
-    div.innerHTML = `
+  const groups=groupByCC();
+  document.getElementById('ccCount').textContent=Object.keys(groups).length;
+  document.getElementById('dashCCList').innerHTML=Object.entries(groups).sort().slice(0,8).map(([cc,assets])=>{
+    const cnt=assets.filter(a=>a.quantFisica!==null&&a.quantFisica!==undefined&&a.quantFisica!=='').length;
+    const p=assets.length>0?Math.round((cnt/assets.length)*100):0;
+    const val=assets.reduce((s,a)=>s+(Number(a.valor)||0),0);
+    const col=p===100?'var(--success)':p>50?'var(--warn)':'var(--danger)';
+    return `<div class="cc-item" onclick="filterCC('${cc}');switchTab('assets')">
       <div class="cc-header">
-        <span class="cc-code">${cc.codigo}</span>
-        <span class="asset-valor">${fmtMoney(cc.valorTotal)}</span>
+        <div><div class="cc-code">CC ${cc}</div><div class="cc-name">${db.centros[cc]?.nome||cc}</div></div>
+        <span style="font-size:20px;font-family:var(--mono);font-weight:800;color:${col}">${p}%</span>
       </div>
-      <div class="cc-name">${cc.nome}</div>
-      <div class="cc-desc">${cc.desc || ''}</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${p}%;background:${col}"></div></div>
       <div class="cc-stats">
-        <span class="cc-stat total">Ativos: ${ativosDoCC.length}</span>
-        <span class="cc-stat ok">Contados: ${contadosDoCC}</span>
+        <span class="cc-stat total">${assets.length} ativos</span>
+        <span class="cc-stat ok">${cnt} contados</span>
+        ${assets.length-cnt>0?`<span class="cc-stat miss">${assets.length-cnt} pendentes</span>`:''}
       </div>
-    `;
-    dashCC.appendChild(div);
-  });
+      <div class="cc-valor-total">💰 ${fmtMoney(val)}</div>
+    </div>`;
+  }).join('')||'<div class="empty"><div class="icon">📭</div><p>Importe os dados da planilha!</p></div>';
+
+  const recent=[...db.assets].filter(a=>a.updatedAt).sort((a,b)=>new Date(b.updatedAt)-new Date(a.updatedAt)).slice(0,5);
+  document.getElementById('recentList').innerHTML=recent.map(a=>`
+    <div class="asset-item" onclick="openAsset('${a.id}')">
+      <div class="asset-header">
+        <div class="asset-name">${a.nome}</div>
+        <span class="status-badge status-${(a.status||'').replace(/[\s\/]/g,'_')}">${a.status||'Pendente'}</span>
+      </div>
+      <div class="asset-footer"><div class="asset-cc">CC ${a.cc}</div><div class="asset-valor">${fmtMoney(a.valor)}</div></div>
+    </div>`).join('')||'<div class="empty" style="padding:20px"><div class="icon">⏱</div><p>Nenhuma contagem ainda</p></div>';
 }
 
 // ════════════════════════════════════
-// ATIVOS (LISTA & FILTROS)
+// ASSETS LIST
 // ════════════════════════════════════
+function groupByCC(){ return db.assets.reduce((g,a)=>{ (g[a.cc]||(g[a.cc]=[])).push(a); return g; },{}); }
+
+function updateCCChips(){
+  const ccs=[...new Set(db.assets.map(a=>a.cc))].sort();
+  document.getElementById('ccChips').innerHTML=`<button class="chip ${currentCC==='ALL'?'active':''}" onclick="filterCC('ALL')" id="chip-ALL">Todos CC</button>`
+    +ccs.map(cc=>`<button class="chip ${currentCC===cc?'active':''}" onclick="filterCC('${cc}')" id="chip-${cc}">${cc}</button>`).join('');
+}
+
+function filterCC(cc){
+  currentCC=cc;
+  document.querySelectorAll('#ccChips .chip').forEach(c=>c.classList.remove('active'));
+  document.getElementById('chip-'+cc)?.classList.add('active');
+  renderAssets();
+}
+
+function filterStatus(s){
+  currentStatus=s;
+  document.querySelectorAll('#statusChips .chip').forEach(c=>c.classList.remove('active'));
+  const map={'ALL':'stchip-ALL','Ativo':'stchip-Ativo','pendente':'stchip-pendente','Não Localizado':'stchip-NL'};
+  document.getElementById(map[s])?.classList.add('active');
+  renderAssets();
+}
+
+function filterAssets(){
+  currentSearch=document.getElementById('assetSearch').value.toLowerCase();
+  renderAssets();
+}
+
+function openSearch(){ switchTab('assets'); setTimeout(()=>document.getElementById('assetSearch')?.focus(),120); }
+
 function renderAssets(){
-  const container = document.getElementById('assetList');
-  container.innerHTML = '';
-  
-  let filtered = db.assets.filter(asset => {
-    // Filtro por Centro de Custo
-    if(currentCC !== 'ALL' && asset.cc !== currentCC) return false;
-    
-    // Filtro por Status
-    if(currentStatus !== 'ALL') {
-      if(currentStatus === 'pendente' && (asset.quantContada || 0) > 0) return false;
-      if(currentStatus === 'Ativo' && asset.status !== 'Ativo') return false;
-      if(currentStatus === 'Não Localizado' && asset.status !== 'Não Localizado') return false;
-    }
-    
-    // Filtro por Busca Textual
-    if(currentSearch.trim() !== '') {
-      const s = currentSearch.toLowerCase();
-      const matchNome = (asset.nome || '').toLowerCase().includes(s);
-      const matchInv = (asset.inventario || '').toLowerCase().includes(s);
-      const matchImob = (asset.imobilizado || '').toLowerCase().includes(s);
-      const matchLoc = (asset.localiz || '').toLowerCase().includes(s);
-      return matchNome || matchInv || matchImob || matchLoc;
-    }
-    
-    return true;
-  });
-  
-  document.getElementById('assetCount').innerText = filtered.length;
-  
-  if(filtered.length === 0) {
-    container.innerHTML = '<div class="empty"><div class="icon">🔍</div><p>Nenhum ativo encontrado para os filtros selecionados.</p></div>';
-    return;
-  }
-  
-  filtered.forEach(asset => {
-    const idx = db.assets.findIndex(a => a.inventario === asset.inventario);
-    const item = document.createElement('div');
-    item.className = 'asset-item';
-    if(scannedId === asset.inventario) item.className += ' highlight';
-    item.onclick = () => openAssetDetail(idx);
-    
-    const countClass = (asset.quantContada || 0) > 0 ? 'count-ok' : 'count-none';
-    
-    item.innerHTML = `
+  let list=db.assets;
+  if(currentCC!=='ALL') list=list.filter(a=>a.cc===currentCC);
+  if(currentStatus==='pendente') list=list.filter(a=>a.quantFisica===null||a.quantFisica===undefined||a.quantFisica==='');
+  else if(currentStatus!=='ALL') list=list.filter(a=>a.status===currentStatus);
+  if(currentSearch) list=list.filter(a=>
+    (a.nome||'').toLowerCase().includes(currentSearch)||
+    (a.inventario||'').toString().includes(currentSearch)||
+    (a.imobilizado||'').toString().includes(currentSearch)||
+    (a.cc||'').toString().includes(currentSearch)
+  );
+  document.getElementById('assetCount').textContent=list.length;
+  document.getElementById('assetList').innerHTML=list.map((a,i)=>{
+    const hasCnt=a.quantFisica!==null&&a.quantFisica!==undefined&&a.quantFisica!=='';
+    const bc=hasCnt?'count-ok':'count-none';
+    const bv=hasCnt?a.quantFisica:'?';
+    const sc='status-'+(a.status||'').replace(/[\s\/]/g,'_')||'status-default';
+    return `<div class="asset-item" style="animation-delay:${Math.min(i,20)*18}ms" onclick="openAsset('${a.id}')">
       <div class="asset-header">
-        <div class="asset-name">${asset.nome}</div>
-        <span class="status-badge status-${(asset.status || 'default').replace(' ', '_')}">${asset.status || 'Pendente'}</span>
+        <div class="asset-name">${a.nome||'Sem nome'}</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div class="count-badge ${bc}">${bv}</div>
+          <span class="status-badge ${sc}">${a.status||'Pendente'}</span>
+        </div>
       </div>
       <div class="asset-meta">
-        <div class="meta-item">Plac/Inv: <span>${asset.inventario || '—'}</span></div>
-        <div class="meta-item">Imob: <span>${asset.imobilizado || '—'}</span></div>
-        <div class="meta-item">Loc: <span>${asset.localiz || '—'}</span></div>
+        ${a.inventario?`<div class="meta-item">Inv: <span>${a.inventario}</span></div>`:''}
+        ${a.imobilizado?`<div class="meta-item">Imob: <span>${a.imobilizado}</span></div>`:''}
+        ${a.dtIncorp?`<div class="meta-item">Dt: <span>${fmtDate(a.dtIncorp)}</span></div>`:''}
       </div>
       <div class="asset-footer">
-        <div class="asset-cc">CC: <strong>${asset.cc}</strong></div>
-        <div style="display:flex; align-items:center; gap:8px">
-          <span class="asset-valor">${fmtMoney(asset.valor)}</span>
-          <div class="count-badge ${countClass}">${asset.quantContada || 0}</div>
+        <div class="asset-cc">📍 CC ${a.cc} · ${a.descLocal||''}</div>
+        <div class="asset-valor">${fmtMoney(a.valor)}</div>
+      </div>
+    </div>`;
+  }).join('')||'<div class="empty"><div class="icon">🔍</div><p>Nenhum ativo encontrado</p></div>';
+}
+
+// ════════════════════════════════════
+// CENTROS CC
+// ════════════════════════════════════
+function renderCentros(){
+  const groups=groupByCC();
+  const keys=Object.keys(groups).sort();
+  document.getElementById('ccBadge').textContent=keys.length;
+  document.getElementById('centrosList').innerHTML=keys.map(cc=>{
+    const assets=groups[cc];
+    const cnt=assets.filter(a=>a.quantFisica!==null&&a.quantFisica!==undefined&&a.quantFisica!=='').length;
+    const miss=assets.filter(a=>a.status==='Não Localizado').length;
+    const val=assets.reduce((s,a)=>s+(Number(a.valor)||0),0);
+    const p=assets.length>0?Math.round((cnt/assets.length)*100):0;
+    const col=p===100?'var(--success)':p>50?'var(--warn)':'var(--danger)';
+    const c=db.centros[cc]||{};
+    return `<div class="cc-item">
+      <div class="cc-header">
+        <div style="flex:1">
+          <div class="cc-code">CC ${cc}</div>
+          <div class="cc-name">${c.nome||'Centro '+cc}</div>
+          ${c.desc?`<div class="cc-desc">${c.desc}</div>`:''}
+          ${c.resp?`<div class="cc-meta-row">👤 Resp: ${c.resp}</div>`:''}
+          ${c.respControladoria?`<div class="cc-meta-row">🏦 Controladoria: ${c.respControladoria}</div>`:''}
+          ${c.data?`<div class="cc-meta-row">📅 Data contagem: ${fmtDate(c.data)}</div>`:''}
+          ${c.localDesc?`<div class="cc-meta-row">📍 ${c.localDesc}</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+          <span style="font-size:20px;font-family:var(--mono);font-weight:800;color:${col}">${p}%</span>
+          <button onclick="event.stopPropagation();editCC('${cc}')" style="padding:5px 10px;border-radius:7px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:11px;cursor:pointer;font-family:var(--sans);font-weight:700">✏️ Editar</button>
         </div>
       </div>
-    `;
-    container.appendChild(item);
-  });
-}
-
-function filterAssets() {
-  currentSearch = document.getElementById('assetSearch').value;
-  renderAssets();
-}
-
-function filterCC(ccCode) {
-  currentCC = ccCode;
-  document.querySelectorAll('#ccChips .chip').forEach(c => c.classList.remove('active'));
-  document.getElementById('chip-' + ccCode)?.classList.add('active');
-  renderAssets();
-}
-
-function filterStatus(status) {
-  currentStatus = status;
-  document.querySelectorAll('#statusChips .chip').forEach(c => c.classList.remove('active'));
-  
-  if(status === 'ALL') document.getElementById('stchip-ALL').classList.add('active');
-  if(status === 'Ativo') document.getElementById('stchip-Ativo').classList.add('active');
-  if(status === 'pendente') document.getElementById('stchip-pendente').classList.add('active');
-  if(status === 'Não Localizado') document.getElementById('stchip-NL').classList.add('active');
-  
-  renderAssets();
-}
-
-function updateCCChips() {
-  const container = document.getElementById('ccChips');
-  container.innerHTML = '<button class="chip active" onclick="filterCC(\'ALL\')" id="chip-ALL">Todos CC</button>';
-  
-  Object.keys(db.centros).forEach(key => {
-    const cc = db.centros[key];
-    const btn = document.createElement('button');
-    btn.className = 'chip';
-    btn.id = 'chip-' + cc.codigo;
-    btn.onclick = () => filterCC(cc.codigo);
-    btn.innerText = `CC ${cc.codigo}`;
-    container.appendChild(btn);
-  });
+      <div class="progress-bar"><div class="progress-fill" style="width:${p}%;background:${col}"></div></div>
+      <div class="cc-stats">
+        <span class="cc-stat total">${assets.length} ativos</span>
+        <span class="cc-stat ok">${cnt} contados</span>
+        ${assets.length-cnt>0?`<span class="cc-stat miss">${assets.length-cnt} pendentes</span>`:''}
+        ${miss>0?`<span class="cc-stat miss">⚠ ${miss} não loc.</span>`:''}
+      </div>
+      <div class="cc-valor-total">💰 Valor contábil total: ${fmtMoney(val)}</div>
+      <button onclick="filterCC('${cc}');switchTab('assets')" style="margin-top:10px;width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--accent);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--sans)">📋 Ver Ativos deste CC →</button>
+    </div>`;
+  }).join('')||'<div class="empty"><div class="icon">📍</div><p>Nenhum centro de custo</p></div>';
 }
 
 // ════════════════════════════════════
-// DETALHE / DIALOG DE INVENTÁRIO DO ATIVO
+// EDIT CC SHEET
 // ════════════════════════════════════
-let activeAssetIdx = null;
-function openAssetDetail(idx) {
-  activeAssetIdx = idx;
-  const asset = db.assets[idx];
-  const overlay = document.getElementById('detailSheet');
-  const body = document.getElementById('sheetBody');
-  
-  body.innerHTML = `
+function editCC(cc){
+  const c=db.centros[cc]||{};
+  document.getElementById('ccSheetBody').innerHTML=`
     <div class="sheet-handle"></div>
-    <div class="sheet-title">${asset.nome}</div>
-    <div class="sheet-sub">Inventário: ${asset.inventario || '—'} | Imobilizado: ${asset.imobilizado || '—'}</div>
-    
-    <div class="detail-row"><div class="detail-label">Centro de Custo</div><div class="detail-val">${asset.cc} - ${db.centros[asset.cc]?.nome || ''}</div></div>
-    <div class="detail-row"><div class="detail-label">Localização</div><div class="detail-val">${asset.localiz || '—'} (${asset.descLocal || '—'})</div></div>
-    <div class="detail-row"><div class="detail-label">Data Incorporação</div><div class="detail-val">${fmtDate(asset.dtIncorp)}</div></div>
-    <div class="detail-row"><div class="detail-label">Valor Contábil</div><div class="detail-val" style="color:var(--accent)">${fmtMoney(asset.valor)}</div></div>
-    
+    <div class="sheet-title">Editar CC ${cc}</div>
+    <div class="sheet-sub">${c.nome||'Centro de Custo'}</div>
+    <div class="cc-detail-body">
+      <div class="cc-detail-field"><label>Nome do Centro</label><input id="cc-nome" value="${c.nome||''}"></div>
+      <div class="cc-detail-field"><label>Descrição da Localização</label><textarea id="cc-desc" style="height:64px;resize:none">${c.desc||''}</textarea></div>
+      <div class="cc-detail-field"><label>Responsável Contagem Física (nome/ID)</label><input id="cc-resp" value="${c.resp||''}"></div>
+      <div class="cc-detail-field"><label>Responsável Controladoria (nome/ID)</label><input id="cc-resp-ctrl" value="${c.respControladoria||''}"></div>
+      <div class="cc-detail-field"><label>Data Contagem</label><input type="date" id="cc-data" value="${c.data||''}"></div>
+      <div class="cc-detail-field"><label>Nº Solicitação de Inventário</label><input id="cc-sol" value="${c.solicitacao||''}"></div>
+    </div>
+    <button class="btn-primary" onclick="saveCCEdit('${cc}')" style="margin-top:4px">💾 Salvar</button>
+  `;
+  document.getElementById('ccEditSheet').classList.add('open');
+}
+function closeCCSheet(e){ if(e.target===document.getElementById('ccEditSheet')) document.getElementById('ccEditSheet').classList.remove('open'); }
+function saveCCEdit(cc){
+  db.centros[cc]={
+    ...db.centros[cc],
+    nome:document.getElementById('cc-nome').value,
+    desc:document.getElementById('cc-desc').value,
+    resp:document.getElementById('cc-resp').value,
+    respControladoria:document.getElementById('cc-resp-ctrl').value,
+    data:document.getElementById('cc-data').value,
+    solicitacao:document.getElementById('cc-sol').value
+  };
+  saveDB(); renderCentros();
+  document.getElementById('ccEditSheet').classList.remove('open');
+  showToast('✅ Centro de Custo atualizado!','success');
+}
+
+// ════════════════════════════════════
+// DETAIL SHEET
+// ════════════════════════════════════
+function openAsset(id){
+  const a=db.assets.find(x=>x.id===id);
+  if(!a) return;
+  const sc='status-'+(a.status||'').replace(/[\s\/]/g,'_')||'status-default';
+  document.getElementById('sheetBody').innerHTML=`
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">${a.nome||'Ativo'}</div>
+    <div class="sheet-sub">CC ${a.cc} · Imob: ${a.imobilizado||'—'} · Inv: ${a.inventario||'—'}</div>
+    ${row('Denominação',a.nome)}
+    ${row('Nº Inventário',a.inventario||'—')}
+    ${row('Imobilizado',a.imobilizado||'—')}
+    ${row('Nº Localização',a.localiz||'—')}
+    ${row('Descr. Local',a.descLocal||'—')}
+    ${row('Dt. Incorporação',fmtDate(a.dtIncorp))}
+    ${row('Valor Contábil',`<span style="color:var(--accent);font-family:var(--mono)">${fmtMoney(a.valor)}</span>`)}
+    ${row('Status',`<span class="status-badge ${sc}">${a.status||'Pendente'}</span>`)}
+    ${a.obs?row('Observação',a.obs):''}
     <div class="count-section">
-      <h3>Contagem Física (Formulário 2118)</h3>
+      <h3>🔢 Contagem Física</h3>
       <div class="count-controls">
-        <button class="count-btn count-minus" onclick="changeCount(-1)">-</button>
-        <div class="count-display" id="sheetCountDisplay">${asset.quantContada || 0}</div>
+        <button class="count-btn count-minus" onclick="changeCount(-1)">−</button>
+        <div class="count-display" id="countDisplay">${a.quantFisica??0}</div>
         <button class="count-btn count-plus" onclick="changeCount(1)">+</button>
       </div>
-      
-      <div class="form-group" style="margin-top:14px">
-        <label class="form-label">Alterar Situação</label>
-        <select class="form-select" id="sheetStatusSelect">
-          <option value="Ativo" ${asset.status==='Ativo'?'selected':''}>Ativo</option>
-          <option value="Baixado" ${asset.status==='Baixado'?'selected':''}>Baixado</option>
-          <option value="Em Uso" ${asset.status==='Em Uso'?'selected':''}>Em Uso</option>
-          <option value="Não Localizado" ${asset.status==='Não Localizado'?'selected':''}>Não Localizado</option>
-        </select>
+      <textarea class="obs-input" id="obsInput" placeholder="Observações desta contagem...">${a.contObs||''}</textarea>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="count-btn" style="flex:1;width:auto;height:44px;border-radius:10px;background:rgba(255,51,85,.15);color:var(--danger);font-size:12px;font-weight:700" onclick="marcarNaoLocalizado('${id}')">⚠ Não Loc.</button>
+        <button class="save-btn" style="margin:0;flex:2" onclick="salvarContagem('${id}')">💾 Salvar</button>
       </div>
-      
-      <label class="form-label" style="margin-top:10px">Nota / Observação da Auditoria</label>
-      <textarea class="obs-input" id="sheetObsInput" placeholder="Avarias, divergências de plaqueta, localização errada...">${asset.obs || ''}</textarea>
-      
-      <button class="save-btn" onclick="saveAssetCount()">💾 Confirmar Lançamento</button>
-    </div>
-  `;
-  overlay.classList.add('open');
+    </div>`;
+  document.getElementById('detailSheet').classList.add('open');
 }
-
-function closeSheet(e) {
-  if(e.target.id === 'detailSheet') {
-    document.getElementById('detailSheet').classList.remove('open');
-  }
-}
-
-function changeCount(val) {
-  const el = document.getElementById('sheetCountDisplay');
-  let current = parseInt(el.innerText) || 0;
-  current += val;
-  if(current < 0) current = 0;
-  el.innerText = current;
-  
-  // Ajuste automático de status se houver contagem ativa
-  const select = document.getElementById('sheetStatusSelect');
-  if(current > 0 && select.value === 'Não Localizado') {
-    select.value = 'Ativo';
-  }
-}
-
-function saveAssetCount() {
-  if(activeAssetIdx === null) return;
-  const q = parseInt(document.getElementById('sheetCountDisplay').innerText) || 0;
-  const st = document.getElementById('sheetStatusSelect').value;
-  const o = document.getElementById('sheetObsInput').value;
-  
-  db.assets[activeAssetIdx].quantContada = q;
-  db.assets[activeAssetIdx].status = st;
-  db.assets[activeAssetIdx].obs = o;
-  
-  saveDB();
+function row(l,v){ return `<div class="detail-row"><span class="detail-label">${l}</span><span class="detail-val">${v}</span></div>`; }
+function closeSheet(e){ if(e.target===document.getElementById('detailSheet')) document.getElementById('detailSheet').classList.remove('open'); }
+function changeCount(delta){ const d=document.getElementById('countDisplay'); d.textContent=Math.max(0,(parseInt(d.textContent)||0)+delta); }
+function salvarContagem(id){
+  const a=db.assets.find(x=>x.id===id); if(!a) return;
+  a.quantFisica=parseInt(document.getElementById('countDisplay').textContent)||0;
+  a.contObs=document.getElementById('obsInput').value;
+  a.updatedAt=new Date().toISOString();
+  if(!a.status||a.status==='Não Localizado') a.status='Ativo';
+  saveDB(); renderAll();
   document.getElementById('detailSheet').classList.remove('open');
-  showToast('Lançamento salvo com sucesso!', 'success');
-  renderAll();
+  showToast('✅ Contagem salva!','success');
+}
+function marcarNaoLocalizado(id){
+  const a=db.assets.find(x=>x.id===id); if(!a) return;
+  a.status='Não Localizado'; a.quantFisica=0;
+  a.contObs=document.getElementById('obsInput').value;
+  a.updatedAt=new Date().toISOString();
+  saveDB(); renderAll();
+  document.getElementById('detailSheet').classList.remove('open');
+  showToast('⚠ Marcado como Não Localizado','error');
 }
 
 // ════════════════════════════════════
-// CENTROS CC VIEW
+// BARCODE SCANNER (BarcodeDetector API)
 // ════════════════════════════════════
-function renderCentros() {
-  const container = document.getElementById('centrosList');
-  container.innerHTML = '';
-  
-  const keys = Object.keys(db.centros);
-  document.getElementById('ccBadge').innerText = keys.length;
-  document.getElementById('ccCount').innerText = keys.length;
-  
-  keys.forEach(key => {
-    const cc = db.centros[key];
-    const ativosDoCC = db.assets.filter(a => a.cc === cc.codigo);
-    const contados = ativosDoCC.filter(a => (a.quantContada || 0) > 0).length;
-    const n_localizados = ativosDoCC.filter(a => a.status === 'Não Localizado').length;
-    
-    const div = document.createElement('div');
-    div.className = 'cc-item';
-    div.onclick = () => openCCEdit(cc.codigo);
-    div.innerHTML = `
-      <div class="cc-header">
-        <span class="cc-code">Centro ${cc.codigo}</span>
-        <span class="asset-valor">${fmtMoney(cc.valorTotal)}</span>
-      </div>
-      <div class="cc-name">${cc.nome}</div>
-      <div class="cc-desc" style="margin-bottom:6px">${cc.desc || 'Sem descrição.'}</div>
-      <div class="cc-meta-row">Resp: <span>${cc.responsavel || 'Não definido'}</span></div>
-      <div class="cc-stats">
-        <span class="cc-stat total">Total Ativos: ${ativosDoCC.length}</span>
-        <span class="cc-stat ok">Contados: ${contados}</span>
-        <span class="cc-stat miss">Não Loc: ${n_localizados}</span>
-      </div>
-    `;
-    container.appendChild(div);
-  });
-}
-
-let activeCCKey = null;
-function openCCEdit(code) {
-  activeCCKey = code;
-  const cc = db.centros[code];
-  const overlay = document.getElementById('ccEditSheet');
-  const body = document.getElementById('ccSheetBody');
-  
-  body.innerHTML = `
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">Configurar Centro de Custo</div>
-    <div class="sheet-sub">Código do Centro: CC ${cc.codigo}</div>
-    
-    <div class="cc-detail-body">
-      <div class="cc-detail-field">
-        <label>Nome do Setor / Centro de Custo</label>
-        <input type="text" id="edit-cc-nome" value="${cc.nome || ''}">
-      </div>
-      <div class="cc-detail-field">
-        <label>Descrição da Atividade</label>
-        <textarea id="edit-cc-desc" style="height:60px">${cc.desc || ''}</textarea>
-      </div>
-      <div class="cc-detail-field">
-        <label>Gerente / Responsável pelo Setor</label>
-        <input type="text" id="edit-cc-resp" value="${cc.responsavel || ''}" placeholder="Ex: Mariston Gonçalves">
-      </div>
-      <button class="save-btn" onclick="saveCCConfig()">💾 Salvar Configurações</button>
-    </div>
-  `;
+async function openScan(){
+  const overlay=document.getElementById('scannerOverlay');
   overlay.classList.add('open');
-}
-
-function closeCCSheet(e) {
-  if(e.target.id === 'ccEditSheet') {
-    document.getElementById('ccEditSheet').classList.remove('open');
+  document.getElementById('scannerResult').classList.remove('show');
+  scannedId=null;
+  try{
+    scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}}});
+    document.getElementById('scannerVideo').srcObject=scanStream;
+    startBarcodeDetection();
+  }catch(e){
+    showToast('❌ Câmera não disponível','error');
+    closeScan();
   }
 }
 
-function saveCCConfig() {
-  if(!activeCCKey) return;
-  db.centros[activeCCKey].nome = document.getElementById('edit-cc-nome').value;
-  db.centros[activeCCKey].desc = document.getElementById('edit-cc-desc').value;
-  db.centros[activeCCKey].responsavel = document.getElementById('edit-cc-resp').value;
-  saveDB();
-  document.getElementById('ccEditSheet').classList.remove('open');
-  showToast('Centro de Custo atualizado.', 'success');
-  renderAll();
-}
-
-// ════════════════════════════════════
-// NOVO ATIVO (ADICIONAR)
-// ════════════════════════════════════
-function populateCCSelects() {
-  const fcc = document.getElementById('f-cc');
-  const rcc = document.getElementById('rel-cc');
-  if(!fcc) return;
-  
-  fcc.innerHTML = '';
-  rcc.innerHTML = '<option value="">Todos os Centros</option>';
-  
-  Object.keys(db.centros).forEach(key => {
-    const cc = db.centros[key];
-    const opt = `<option value="${cc.codigo}">CC ${cc.codigo} - ${cc.nome}</option>`;
-    fcc.innerHTML += opt;
-    rcc.innerHTML += opt;
-  });
-}
-
-function salvarAtivo() {
-  const nome = document.getElementById('f-nome').value;
-  const inv = document.getElementById('f-inventario').value;
-  const imob = document.getElementById('f-imobilizado').value;
-  const loc = document.getElementById('f-localiz').value;
-  const locDesc = document.getElementById('f-local-desc').value;
-  const cc = document.getElementById('f-cc').value;
-  const val = parseFloat(document.getElementById('f-valor').value) || 0;
-  const st = document.getElementById('f-status').value;
-  const obs = document.getElementById('f-obs').value;
-  const dt = document.getElementById('f-data').value;
-  
-  if(!nome || !cc || !inv) {
-    showToast('Nome, Inventário e Centro de Custo são obrigatórios!', 'error');
+function startBarcodeDetection(){
+  if(!('BarcodeDetector' in window)){
+    // Fallback: manual input
+    document.getElementById('scannerResult').classList.add('show');
+    document.getElementById('scanAssetName').textContent='BarcodeDetector não disponível';
+    document.getElementById('scanAssetInfo').innerHTML=`<input id="manualCode" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);font-size:14px;outline:none;margin-bottom:8px" placeholder="Digite Nº Inventário ou Imobilizado" oninput="tryFindByCode(this.value)">`;
     return;
   }
-  
-  // Evitar chaves duplicadas de inventário
-  if (db.assets.some(a => a.inventario === inv)) {
-    showToast('Este Nº de Inventário/Plaqueta já existe!', 'error');
-    return;
-  }
-  
-  const novo = {
-    cc: cc, inventario: inv, imobilizado: imob, localiz: loc,
-    descLocal: locDesc, dtIncorp: dt, nome: nome, valor: val,
-    status: st, quantContada: 0, obs: obs
-  };
-  
-  db.assets.push(novo);
-  
-  // Atualiza valor total sumário do CC correspondente
-  if(db.centros[cc]) {
-    db.centros[cc].totalAtivos += 1;
-    db.centros[cc].valorTotal += val;
-  }
-  
-  saveDB();
-  limparForm();
-  showToast('Ativo inserido com sucesso!', 'success');
-  renderAll();
-  switchTab('assets');
-}
-
-function limparForm() {
-  document.getElementById('f-nome').value = '';
-  document.getElementById('f-inventario').value = '';
-  document.getElementById('f-imobilizado').value = '';
-  document.getElementById('f-localiz').value = '';
-  document.getElementById('f-local-desc').value = '';
-  document.getElementById('f-valor').value = '';
-  document.getElementById('f-obs').value = '';
-  document.getElementById('f-data').value = '';
-}
-
-// ════════════════════════════════════
-// BARCODE SCANNER INTEGRADO COM HTML5QRCODE
-// ════════════════════════════════════
-function openScan() {
-  document.getElementById('scannerOverlay').classList.add('open');
-  document.getElementById('scannerResult').classList.remove('show');
-  
-  // Certifica-se de fechar qualquer câmera ativa antes de iniciar
-  if (html5QrcodeScanner) {
-    html5QrcodeScanner.clear();
-  }
-
-  // Inicializa o leitor na div contêiner criada na marcação HTML
-  html5QrcodeScanner = new Html5Qrcode("scannerVideoContainer");
-  
-  // Configurações ideais para leitura ágil de código de barras em ambiente industrial
-  const config = { 
-    fps: 20, 
-    qrbox: { width: 260, height: 110 },
-    aspectRatio: 1.0
-  };
-
-  // Aciona a câmera traseira ('environment') por padrão
-  html5QrcodeScanner.start(
-    { facingMode: "environment" }, 
-    config, 
-    onScanSuccess, 
-    onScanFailure
-  ).catch(err => {
-    console.error("Erro ao iniciar câmera: ", err);
-    showToast("Não foi possível acessar a câmera traseira.", "error");
-  });
-}
-
-function onScanSuccess(decodedText, decodedResult) {
-  // Executa uma vibração leve se suportado pelo dispositivo móvel
-  if (navigator.vibrate) navigator.vibrate(100);
-
-  // Armazena o código lido
-  scannedId = decodedText.trim();
-  
-  // Busca se o ativo lido já consta cadastrado no banco de dados local
-  const asset = db.assets.find(a => a.inventario === scannedId || a.imobilizado === scannedId);
-  
-  const resultDiv = document.getElementById('scannerResult');
-  const nameEl = document.getElementById('scanAssetName');
-  const infoEl = document.getElementById('scanAssetInfo');
-  
-  document.getElementById('scanFoundCode').innerText = scannedId;
-  
-  if (asset) {
-    nameEl.innerText = asset.nome;
-    infoEl.innerText = `CC: ${asset.cc} | Localização: ${asset.localiz || '—'}`;
-  } else {
-    nameEl.innerText = "Ativo Não Encontrado";
-    infoEl.innerText = "Plaqueta sem correspondência. Deseja cadastrar como um Novo Ativo?";
-  }
-  
-  resultDiv.classList.add('show');
-  
-  // Pausa o escaneamento para que o usuário possa interagir com o resultado
-  if (html5QrcodeScanner) {
-    html5QrcodeScanner.pause(true);
-  }
-}
-
-function onScanFailure(error) {
-  // Falhas silenciosas para não inundar o console durante a varredura contínua de frames
-}
-
-function closeScan() {
-  if (html5QrcodeScanner) {
-    html5QrcodeScanner.stop().then(() => {
-      document.getElementById('scannerOverlay').classList.remove('open');
-    }).catch(err => {
-      document.getElementById('scannerOverlay').classList.remove('remove');
-    });
-  } else {
-    document.getElementById('scannerOverlay').classList.remove('open');
-  }
-}
-
-function continueScan() {
-  document.getElementById('scannerResult').classList.remove('show');
-  if (html5QrcodeScanner) {
-    html5QrcodeScanner.resume();
-  }
-}
-
-function openScannedAsset() {
-  if (!scannedId) return;
-  const idx = db.assets.findIndex(a => a.inventario === scannedId || a.imobilizado === scannedId);
-  
-  if (idx !== -1) {
-    closeScan();
-    switchTab('assets');
-    openAssetDetail(idx);
-  } else {
-    // Redireciona para o formulário de inserção já preenchendo o número da plaqueta lida
-    closeScan();
-    switchTab('adicionar');
-    document.getElementById('f-inventario').value = scannedId;
-    showToast("Preencha os dados da nova plaqueta imobilizada.", "success");
-  }
-}
-
-function openSearch() {
-  switchTab('assets');
-  document.getElementById('assetSearch').focus();
-}
-
-// ════════════════════════════════════
-// SIGNATURE & RELATÓRIO
-// ════════════════════════════════════
-function initSig() {
-  const canvas = document.getElementById('sigCanvas');
-  if(!canvas) return;
-  sigCtx = canvas.getContext('2d');
-  sigCtx.strokeStyle = '#00d4aa';
-  sigCtx.lineWidth = 2.5;
-  
-  // Touch Handlers
-  canvas.addEventListener('touchstart', e => {
-    sigDrawing = true;
-    const t = e.touches[0];
-    const rect = canvas.getBoundingClientRect();
-    sigCtx.beginPath();
-    sigCtx.moveTo(t.clientX - rect.left, t.clientY - rect.top);
-    e.preventDefault();
-  });
-  
-  canvas.addEventListener('touchmove', e => {
-    if(!sigDrawing) return;
-    const t = e.touches[0];
-    const rect = canvas.getBoundingClientRect();
-    sigCtx.lineTo(t.clientX - rect.left, t.clientY - rect.top);
-    sigCtx.stroke();
-    sigHasData = true;
-    document.getElementById('sigStatus').innerText = "Assinatura detectada.";
-    e.preventDefault();
-  });
-  
-  canvas.addEventListener('touchend', () => { sigDrawing = false; });
-  
-  // Mouse Handlers
-  canvas.addEventListener('mousedown', e => {
-    sigDrawing = true;
-    const rect = canvas.getBoundingClientRect();
-    sigCtx.beginPath();
-    sigCtx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-  });
-  canvas.addEventListener('mousemove', e => {
-    if(!sigDrawing) return;
-    const rect = canvas.getBoundingClientRect();
-    sigCtx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-    sigCtx.stroke();
-    sigHasData = true;
-    document.getElementById('sigStatus').innerText = "Assinatura detectada.";
-  });
-  canvas.addEventListener('mouseup', () => { sigDrawing = false; });
-}
-
-function clearSig() {
-  const canvas = document.getElementById('sigCanvas');
-  sigCtx.clearRect(0, 0, canvas.width, canvas.height);
-  sigHasData = false;
-  document.getElementById('sigStatus').innerText = "Assine acima com o dedo";
-}
-
-function previewRelatorio() {
-  const ccSel = document.getElementById('rel-cc').value;
-  const preview = document.getElementById('relPreview');
-  
-  let assets = db.assets;
-  if(ccSel) assets = assets.filter(a => a.cc === ccSel);
-  
-  preview.innerHTML = `
-    <div class="section-header"><h2>Pré-visualização de Linhas (${assets.length})</h2></div>
-    <div style="font-size:11px; font-family:var(--mono); color:var(--text2); background:var(--bg3); padding:10px; border-radius:8px; max-height:150px; overflow-y:auto">
-      ${assets.map(a => `• [CC ${a.cc}] ${a.nome.substring(0,25)}... - Contado: ${a.quantContada||0}`).join('<br>')}
-    </div>
-  `;
-}
-
-function gerarRelatorio() {
-  const ccSel = document.getElementById('rel-cc').value;
-  const resp = document.getElementById('rel-resp').value || '—';
-  const printArea = document.getElementById('printArea');
-  
-  let targetAssets = db.assets;
-  if(ccSel) targetAssets = targetAssets.filter(a => a.cc === ccSel);
-  
-  const imgData = sigHasData ? document.getElementById('sigCanvas').toDataURL() : null;
-  
-  let rowsHtml = targetAssets.map(a => `
-    <tr>
-      <td>${a.cc}</td>
-      <td>${a.inventario || ''}</td>
-      <td>${a.imobilizado || ''}</td>
-      <td>${a.nome}</td>
-      <td>${fmtDate(a.dtIncorp)}</td>
-      <td style="text-align:right">${Number(a.valor).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
-      <td style="text-align:center; font-weight:bold">${a.quantContada || 0}</td>
-      <td>${a.status || ''}</td>
-      <td>${a.obs || ''}</td>
-    </tr>
-  `).join('');
-  
-  printArea.innerHTML = `
-    <div style="padding:25px; color:#000; background:#fff; font-family:sans-serif; font-size:12px">
-      <div style="display:flex; justify-content:space-between; border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:15px">
-        <div>
-          <h2 style="margin:0; font-size:16px">BRF S.A. – Unidade Rio das Pedras</h2>
-          <p style="margin:2px 0 0; font-size:11px; color:#555">Formulário Técnica 2118 – Controle de Ativos Imobilizados</p>
-        </div>
-        <div style="text-align:right">
-          <p style="margin:0"><strong>Data Impressão:</strong> ${new Date().toLocaleDateString('pt-BR')}</p>
-          <p style="margin:2px 0 0"><strong>Centro Custo:</strong> ${ccSel || 'TODOS'}</p>
-        </div>
-      </div>
-      
-      <table border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse:collapse; font-size:10px; margin-bottom:30px">
-        <thead style="background:#f0f0f0">
-          <tr>
-            <th>CC</th>
-            <th>Nº Inv.</th>
-            <th>Imobilizado</th>
-            <th>Denominação do Ativo</th>
-            <th>Incorporação</th>
-            <th>Valor Contábil</th>
-            <th>Qtd Física</th>
-            <th>Situação</th>
-            <th>Observações da Auditoria</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rowsHtml || '<tr><td colspan="9">Nenhum registro selecionado.</td></tr>'}
-        </tbody>
-      </table>
-      
-      <div style="display:flex; justify-content:space-between; margin-top:50px; page-break-inside:avoid">
-        <div style="width:45%; border-top:1px solid #000; padding-top:5px; text-align:center">
-          <p style="margin:0"><strong>Responsável Setorial (Físico)</strong></p>
-          <p style="margin:15px 0 0; color:#777; font-size:10px">(Assinatura sob carimbo no campo físico)</p>
-        </div>
-        <div style="width:45%; border-top:1px solid #000; padding-top:5px; text-align:center">
-          ${imgData ? `<img src="${imgData}" style="height:40px; display:block; margin:0 auto 5px">` : '<div style="height:40px"></div>'}
-          <p style="margin:0"><strong>Responsável Controladoria:</strong> ${resp}</p>
-        </div>
-      </div>
-    </div>
-  `;
-  
-  window.print();
-}
-
-function exportarCSV() {
-  const ccSel = document.getElementById('rel-cc').value;
-  let targetAssets = db.assets;
-  if(ccSel) targetAssets = targetAssets.filter(a => a.cc === ccSel);
-  
-  let csv = '\uFEFF'; // BOM para Excel abrir acentos em PT-BR corretamente
-  csv += 'Centro Custo;Nro Inventario;Imobilizado;Denominacao;Data Incorporacao;Valor Contabil;Qtd Fisica;Situacao;Observacao\n';
-  
-  targetAssets.forEach(a => {
-    csv += `"${a.cc}";"${a.inventario||''}";"${a.imobilizado||''}";"${a.nome.replace(/"/g, '""')}";"${fmtDate(a.dtIncorp)}";"${a.valor}";"${a.quantContada||0}";"${a.status||''}";"${(a.obs||'').replace(/\n/g, ' ')}"\n`;
-  });
-  
-  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.setAttribute("href", url);
-  link.setAttribute("download", `Formulário_2118_CC_${ccSel || 'Completo'}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
-
-// ════════════════════════════════════
-// GERENCIAMENTO DE ARQUIVOS / DATA IMPORT
-// ════════════════════════════════════
-function loadSampleData() {
-  db.assets = sampleAssets;
-  db.centros = sampleCentros;
-  saveDB();
-  showToast('Base de dados recarregada para o padrão 2118.', 'success');
-  renderAll();
-}
-
-function exportData() {
-  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
-  const link = document.createElement('a');
-  link.setAttribute("href", dataStr);
-  link.setAttribute("download", "auditoria_imobilizados_2118.json");
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-}
-
-function clearData() {
-  if(confirm("Atenção! Isso excluirá permanentemente todos os registros de auditoria e contagens físicas salvos. Deseja continuar?")) {
-    db = {assets:[], centros:{}, meta:{empresa:'2500', centro:'300', descCentro:'FRIG/IND FRG VDA', numSolicitacao:''}};
-    saveDB();
-    showToast('Banco de dados local limpo.', 'error');
-    renderAll();
-    populateCCSelects();
-  }
-}
-
-function dragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag'); }
-function handleFile(e) { const file = e.target.files[0]; processFile(file); }
-function dropFile(e) { e.preventDefault(); e.currentTarget.classList.remove('drag'); const file = e.dataTransfer.files[0]; processFile(file); }
-
-function processFile(file) {
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const json = JSON.parse(e.target.result);
-      if(json.assets && json.centros) {
-        db = json;
-        saveDB();
-        showToast('Backup JSON importado e aplicado com sucesso!', 'success');
-        renderAll();
-        populateCCSelects();
-      } else {
-        showToast('Arquivo inválido. Formato incompatível com a 2118.', 'error');
+  const detector=new BarcodeDetector({formats:['code_128','code_39','ean_13','ean_8','qr_code','data_matrix','aztec','pdf417']});
+  const video=document.getElementById('scannerVideo');
+  scanInterval=setInterval(async()=>{
+    if(video.readyState<2) return;
+    try{
+      const codes=await detector.detect(video);
+      if(codes.length>0){
+        clearInterval(scanInterval);
+        const code=codes[0].rawValue;
+        handleScanResult(code);
       }
-    } catch {
-      showToast('Erro ao ler arquivo. Certifique-se de que é um JSON válido.', 'error');
-    }
-  };
-  reader.readAsText(file);
+    }catch{}
+  },300);
+}
+
+function tryFindByCode(val){
+  const v=val.trim();
+  const a=db.assets.find(x=>x.inventario===v||x.imobilizado===v||x.id===v);
+  if(a){
+    scannedId=a.id;
+    document.getElementById('scanAssetName').textContent=a.nome;
+    document.getElementById('scanAssetInfo').textContent=`CC ${a.cc} · Inv: ${a.inventario||'—'} · ${fmtMoney(a.valor)}`;
+  }
+}
+
+function handleScanResult(code){
+  const a=db.assets.find(x=>x.inventario===code||x.imobilizado===code||code.includes(x.inventario)||code.includes(x.imobilizado));
+  scannedId=a?.id||null;
+  document.getElementById('scanAssetName').textContent=a?a.nome:`Código: ${code}`;
+  document.getElementById('scanAssetInfo').textContent=a?`CC ${a.cc} · Inv: ${a.inventario||'—'} · Imob: ${a.imobilizado||'—'}  · ${fmtMoney(a.valor)}`:'Ativo não encontrado na base';
+  document.getElementById('scannerResult').classList.add('show');
+  // vibrate
+  if(navigator.vibrate) navigator.vibrate([100,50,100]);
+}
+
+function openScannedAsset(){
+  closeScan();
+  if(scannedId) setTimeout(()=>openAsset(scannedId),300);
+}
+
+function continueScan(){
+  document.getElementById('scannerResult').classList.remove('show');
+  scannedId=null;
+  startBarcodeDetection();
+}
+
+function closeScan(){
+  clearInterval(scanInterval);
+  if(scanStream) scanStream.getTracks().forEach(t=>t.stop());
+  scanStream=null;
+  document.getElementById('scannerOverlay').classList.remove('open');
 }
 
 // ════════════════════════════════════
-// TOAST COMPONENT
+// SIGNATURE PAD
 // ════════════════════════════════════
-function showToast(msg, type='') {
-  const t = document.getElementById('toast');
-  t.innerText = msg;
-  t.className = 'toast show ' + type;
-  setTimeout(() => { t.classList.remove('show'); }, 3000);
+function initSig(){
+  const canvas=document.getElementById('sigCanvas');
+  if(!canvas) return;
+  sigCtx=canvas.getContext('2d');
+  sigCtx.strokeStyle='#00d4aa';
+  sigCtx.lineWidth=2.5;
+  sigCtx.lineCap='round';
+  sigCtx.lineJoin='round';
+  const getPos=(e)=>{
+    const r=canvas.getBoundingClientRect();
+    const src=e.touches?e.touches[0]:e;
+    return{x:(src.clientX-r.left)*(canvas.width/r.width),y:(src.clientY-r.top)*(canvas.height/r.height)};
+  };
+  canvas.addEventListener('mousedown',e=>{sigDrawing=true;sigCtx.beginPath();const p=getPos(e);sigCtx.moveTo(p.x,p.y)});
+  canvas.addEventListener('mousemove',e=>{if(!sigDrawing)return;const p=getPos(e);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();sigHasData=true;document.getElementById('sigStatus').textContent='Assinatura registrada ✓'});
+  canvas.addEventListener('mouseup',()=>sigDrawing=false);
+  canvas.addEventListener('touchstart',e=>{e.preventDefault();sigDrawing=true;sigCtx.beginPath();const p=getPos(e);sigCtx.moveTo(p.x,p.y)},{passive:false});
+  canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!sigDrawing)return;const p=getPos(e);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();sigHasData=true;document.getElementById('sigStatus').textContent='Assinatura registrada ✓'},{passive:false});
+  canvas.addEventListener('touchend',()=>sigDrawing=false);
+}
+function clearSig(){ if(sigCtx){sigCtx.clearRect(0,0,600,90);sigHasData=false;document.getElementById('sigStatus').textContent='Assine acima com o dedo';}}
+
+// ════════════════════════════════════
+// RELATÓRIO (print + CSV)
+// ════════════════════════════════════
+function populateCCSelects(){
+  const ccs=Object.keys(db.centros).sort();
+  const allCC=[...new Set([...ccs,...db.assets.map(a=>a.cc)])].sort();
+  ['rel-cc','f-cc'].forEach(id=>{
+    const sel=document.getElementById(id); if(!sel) return;
+    const val=sel.value;
+    const isRel=id==='rel-cc';
+    sel.innerHTML=(isRel?'<option value="">Todos os Centros</option>':'<option value="">Selecione...</option>')
+      +allCC.map(cc=>`<option value="${cc}">${cc} · ${db.centros[cc]?.nome||'CC '+cc}</option>`).join('');
+    if(val) sel.value=val;
+  });
+}
+
+function previewRelatorio(){
+  const cc=document.getElementById('rel-cc').value;
+  const assets=cc?db.assets.filter(a=>a.cc===cc):db.assets;
+  const total=assets.reduce((s,a)=>s+(Number(a.valor)||0),0);
+  const counted=assets.filter(a=>a.quantFisica!==null&&a.quantFisica!==undefined&&a.quantFisica!=='').length;
+  document.getElementById('relPreview').innerHTML=`
+    <div class="card">
+      <div class="card-title">Preview</div>
+      <div class="asset-meta" style="margin-top:8px">
+        <div class="meta-item">Ativos: <span>${assets.length}</span></div>
+        <div class="meta-item">Contados: <span>${counted}</span></div>
+        <div class="meta-item">Valor Total: <span style="color:var(--accent)">${fmtMoney(total)}</span></div>
+      </div>
+    </div>`;
+}
+
+function buildReportHTML(cc){
+  const c=db.centros[cc]||{};
+  const assets=db.assets.filter(a=>a.cc===cc).sort((a,b)=>(parseInt(a.inventario)||0)-(parseInt(b.inventario)||0));
+  const total=assets.reduce((s,a)=>s+(Number(a.valor)||0),0);
+  const resp=document.getElementById('rel-resp')?.value||c.respControladoria||'';
+  const sigData=sigHasData?document.getElementById('sigCanvas').toDataURL():'';
+
+  const rows=assets.map((a,i)=>`
+    <tr>
+      <td>${i+1}</td>
+      <td>${a.inventario||''}</td>
+      <td>${a.imobilizado||''}</td>
+      <td>${a.localiz||''}</td>
+      <td>${a.descLocal||''}</td>
+      <td>${a.dtIncorp?new Date(a.dtIncorp).toLocaleDateString('pt-BR'):''}</td>
+      <td>${a.nome||''}</td>
+      <td style="text-align:right">${Number(a.valor||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
+      <td style="text-align:center">${a.quantFisica??''}</td>
+      <td>${a.status||''}</td>
+      <td>${a.contObs||''}</td>
+    </tr>`).join('');
+
+  return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+  <title>Formulário 2118 – CC ${cc}</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:Arial,sans-serif;font-size:9pt;color:#000;background:#fff}
+    .header-box{border:2px solid #000;padding:8px;margin-bottom:8px}
+    .form-title{font-size:12pt;font-weight:bold;text-align:center;margin-bottom:6px;border-bottom:1px solid #000;padding-bottom:4px}
+    .header-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+    .header-field{display:flex;gap:4px;padding:2px 0;border-bottom:1px dotted #ccc;font-size:8pt}
+    .header-field label{font-weight:bold;white-space:nowrap;min-width:160px}
+    table{width:100%;border-collapse:collapse;margin-top:8px;font-size:7.5pt}
+    th{background:#1a1a1a;color:#fff;padding:4px 3px;text-align:left;border:1px solid #555;font-size:7pt}
+    td{padding:3px;border:1px solid #ccc;vertical-align:top}
+    tr:nth-child(even){background:#f5f5f5}
+    .total-row{font-weight:bold;background:#e0ffe0!important}
+    .footer{margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+    .sig-block{border-top:2px solid #000;padding-top:6px;text-align:center}
+    .sig-block p{font-size:8pt;margin-top:4px}
+    @media print{@page{margin:12mm}body{font-size:8pt}}
+  </style></head><body>
+  <div class="header-box">
+    <div class="form-title">Formulário 2118 – PLANILHA DE CONTAGEM INVENTÁRIO ATIVO IMOBILIZADO</div>
+    <div class="header-grid">
+      <div>
+        <div class="header-field"><label>Centro:</label><span>${db.meta?.empresa||'2500'} – ${db.meta?.descCentro||'FRIG/IND FRG VDA'}</span></div>
+        <div class="header-field"><label>Centro de Custo / Descrição:</label><span>${cc} – ${c.nome||''}</span></div>
+        <div class="header-field"><label>Descrição da Localização:</label><span>${c.desc||c.localDesc||''}</span></div>
+        <div class="header-field"><label>Nº da Solicitação de Inventário:</label><span>${c.solicitacao||''}</span></div>
+      </div>
+      <div>
+        <div class="header-field"><label>Data Contagem:</label><span>${c.data?new Date(c.data).toLocaleDateString('pt-BR'):''}</span></div>
+        <div class="header-field"><label>Responsável Contagem Física (nome/ID):</label><span>${c.resp||''}</span></div>
+        <div class="header-field"><label>Responsável Controladoria (nome/ID):</label><span>${resp}</span></div>
+      </div>
+    </div>
+  </div>
+  <table>
+    <thead><tr>
+      <th>Item</th><th>Nº Invent.</th><th>Imobilizado</th><th>Nº Localiz.</th>
+      <th>Descr. Local</th><th>Dt. Incorp.</th><th>Denominação do Imobilizado</th>
+      <th>Valor Contábil R$</th><th>Quant. Física</th><th>Status</th><th>OBS</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+    <tfoot><tr class="total-row">
+      <td colspan="7" style="text-align:right;padding-right:6px"><strong>TOTAL VALOR CONTÁBIL:</strong></td>
+      <td style="text-align:right"><strong>${Number(total).toLocaleString('pt-BR',{minimumFractionDigits:2})}</strong></td>
+      <td colspan="3"></td>
+    </tr></tfoot>
+  </table>
+  <div class="footer">
+    <div class="sig-block">
+      ${sigData?`<img src="${sigData}" style="max-height:60px;max-width:240px">`:'<div style="height:60px"></div>'}
+      <p><strong>${resp||'________________________________'}</strong></p>
+      <p>Responsável Controladoria</p>
+    </div>
+    <div class="sig-block">
+      <div style="height:60px"></div>
+      <p><strong>${c.resp||'________________________________'}</strong></p>
+      <p>Responsável Contagem Física</p>
+    </div>
+  </div>
+  <p style="margin-top:16px;font-size:7pt;color:#666;text-align:center">Gerado em ${new Date().toLocaleString('pt-BR')} · Sistema Controle Imobilizados 2118</p>
+  </body></html>`;
+}
+
+function gerarRelatorio(){
+  const selCC=document.getElementById('rel-cc').value;
+  const ccsParaGerar=selCC?[selCC]:Object.keys(db.centros).filter(cc=>db.assets.some(a=>a.cc===cc));
+  if(!ccsParaGerar.length){ showToast('❌ Nenhum CC com ativos','error'); return; }
+  ccsParaGerar.forEach((cc,i)=>{
+    setTimeout(()=>{
+      const html=buildReportHTML(cc);
+      const win=window.open('','_blank');
+      if(win){ win.document.write(html); win.document.close(); setTimeout(()=>win.print(),600); }
+    },i*400);
+  });
+  showToast(`🖨 Gerando ${ccsParaGerar.length} relatório(s)...`,'success');
+}
+
+function exportarCSV(){
+  const selCC=document.getElementById('rel-cc').value;
+  const assets=selCC?db.assets.filter(a=>a.cc===selCC):db.assets;
+  const header='Item;CC;Nº Inventário;Imobilizado;Nº Localiz;Descr. Local;Dt. Incorp.;Denominação;Valor Contábil;Quant. Física;Status;OBS';
+  const rows=assets.map((a,i)=>[i+1,a.cc,a.inventario||'',a.imobilizado||'',a.localiz||'',a.descLocal||'',a.dtIncorp?new Date(a.dtIncorp).toLocaleDateString('pt-BR'):'',a.nome||'',Number(a.valor||0).toFixed(2).replace('.',','),a.quantFisica??'',a.status||'',a.contObs||''].join(';')).join('\n');
+  const blob=new Blob(['\uFEFF'+header+'\n'+rows],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement('a');
+  link.href=url; link.download=`imobilizados_CC${selCC||'todos'}_${new Date().toISOString().slice(0,10)}.csv`;
+  link.click();
+  showToast('📊 CSV exportado!','success');
+}
+
+// ════════════════════════════════════
+// FORM
+// ════════════════════════════════════
+function salvarAtivo(){
+  const nome=document.getElementById('f-nome').value.trim();
+  if(!nome){ showToast('❗ Informe o nome do ativo','error'); return; }
+  const cc=document.getElementById('f-cc').value||'000';
+  const ativo={
+    id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+    nome,cc,
+    inventario:document.getElementById('f-inventario').value,
+    imobilizado:document.getElementById('f-imobilizado').value,
+    localiz:document.getElementById('f-localiz').value,
+    descLocal:document.getElementById('f-local-desc').value,
+    dtIncorp:document.getElementById('f-data').value,
+    valor:parseFloat(document.getElementById('f-valor').value)||0,
+    status:document.getElementById('f-status').value,
+    obs:document.getElementById('f-obs').value,
+    quantFisica:null,createdAt:new Date().toISOString()
+  };
+  db.assets.push(ativo);
+  if(!db.centros[cc]) db.centros[cc]={nome:'CC '+cc};
+  saveDB(); renderAll(); populateCCSelects();
+  limparForm();
+  showToast('✅ Ativo salvo!','success');
+  switchTab('assets');
+}
+function limparForm(){
+  ['f-nome','f-inventario','f-imobilizado','f-localiz','f-local-desc','f-data','f-obs'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-valor').value='';
+  document.getElementById('f-status').value='Ativo';
+}
+
+// ════════════════════════════════════
+// IMPORT / EXPORT
+// ════════════════════════════════════
+function dragOver(e){ e.preventDefault(); document.getElementById('importArea').classList.add('drag'); }
+function handleFile(e){ processFile(e.target.files[0]); }
+function dropFile(e){ e.preventDefault(); document.getElementById('importArea').classList.remove('drag'); processFile(e.dataTransfer.files[0]); }
+function processFile(file){
+  if(!file) return;
+  if(file.name.endsWith('.json')){
+    const r=new FileReader();
+    r.onload=e=>{try{const d=JSON.parse(e.target.result);if(d.assets){db=d;saveDB();renderAll();updateCCChips();populateCCSelects();showToast(`✅ ${db.assets.length} ativos importados!`,'success');}}catch{showToast('❗ JSON inválido','error');}};
+    r.readAsText(file);
+  } else { showToast('Use arquivo JSON exportado por este app',''); }
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`imob2118_${new Date().toISOString().slice(0,10)}.json`; a.click();
+  showToast('📤 Exportado!','success');
+}
+function clearData(){ if(!confirm('Apagar todos os dados?')) return; db={assets:[],centros:{},meta:{empresa:'2500',centro:'300',descCentro:'FRIG/IND FRG VDA'}}; saveDB();renderAll();updateCCChips();populateCCSelects();showToast('🗑 Dados apagados',''); }
+
+// ════════════════════════════════════
+// SAMPLE DATA (planilha 2118)
+// ════════════════════════════════════
+function loadSampleData(){
+  db.centros={
+    '115':{nome:'Mini Fab. - FFG VDA',desc:'Fábrica de Farinhas e Gorduras - VDA',resp:'Bronislava Wiglondal / 411090',respControladoria:'Mariston Gonçalves',data:'2026-06-05',solicitacao:''},
+    '125':{nome:'Mini Fabrica - Co-ex',desc:'Extrusão – Co-extrusão',resp:'Leandro Luiz Silva / LSV',respControladoria:'Mariston Gonçalves',data:'2026-06-03',solicitacao:''},
+    '138':{nome:'Prod. Estoc. Expedicao Ind',desc:'Estocagem e carregamento Industrializado',resp:'Gisele Goss / 400988',respControladoria:'Mariston Gonçalves',data:'2026-06-02',solicitacao:''},
+    '146':{nome:'Op. Ger.de Vapor - V',desc:'Operações Gerenciamento de Vapor VDA',resp:'Marcelo Elias / 314139',respControladoria:'Mariston Gonçalves',data:'2026-06-10',solicitacao:''},
+    '150':{nome:'G. D.Energ. VDA',desc:'Gestão e Distribuição de Energia VDA',resp:'Jean Pasqualin / 314139',respControladoria:'Mariston Gonçalves',data:'2026-06-08',solicitacao:''},
+    '165':{nome:'Ger. Unidade - VDA',desc:'Gerência Unidade VDA',resp:'Lucineia Antunes Valtte / LAV',respControladoria:'Mariston Gonçalves',data:'2026-06-02',solicitacao:''},
+    '201271071':{nome:'Laboratorio Ind. VDA',desc:'Laboratório Industrial VDA',resp:'Lais Souza / 500332',respControladoria:'Mariston Gonçalves',data:'2026-06-09',solicitacao:''},
+    '201450496':{nome:'IT Services - VDA',desc:'Tecnologia da Informação VDA',resp:'Moises Milek / 569252',respControladoria:'Mariston Gonçalves',data:'2026-06-02',solicitacao:''}
+  };
+  const raw=[
+    {cc:'115',inventario:'',imobilizado:'466952',localiz:'0016',descLocal:'Fábrica de Farinhas e Gorduras - VDA',dtIncorp:'2013-11-29',nome:'SISTEMA ILUMINAÇÃO DE EMERGÊNCIA ÁREAS FFG/COE',valor:13964,status:'Ativo'},
+    {cc:'115',inventario:'',imobilizado:'2143431',localiz:'0016',descLocal:'Fábrica de Farinhas e Gorduras - VDA',dtIncorp:'2022-01-25',nome:'INSTALAÇÃO ELETRICA PREDIO FFG',valor:768104,status:'Ativo'},
+    {cc:'115',inventario:'',imobilizado:'2144674',localiz:'0016',descLocal:'Fábrica de Farinhas e Gorduras - VDA',dtIncorp:'2024-01-12',nome:'INSTALAÇÃO HIDRAULICA FFG',valor:387281,status:'Ativo'},
+    {cc:'115',inventario:'103546',imobilizado:'8299218',localiz:'0016',descLocal:'Fábrica de Farinhas e Gorduras - VDA',dtIncorp:'2023-11-30',nome:'MAQUINA QUEBRADORA DE BLOCOS DE CARNE CONGELADA',valor:0,status:'Ativo'},
+    {cc:'115',inventario:'105977',imobilizado:'411072',localiz:'0016',descLocal:'Fábrica de Farinhas e Gorduras - VDA',dtIncorp:'2010-06-01',nome:'EXAUSTOR CENTRIFUGO BERNAUVER UBR 231/900 ACO INOX',valor:0,status:'Ativo'},
+    {cc:'115',inventario:'105978',imobilizado:'411071',localiz:'0016',descLocal:'Fábrica de Farinhas e Gorduras - VDA',dtIncorp:'2010-06-01',nome:'EXAUSTOR CENTRIFUGO BERNAUVER UBR 231/900 ACO INOX',valor:0,status:'Ativo'},
+    {cc:'115',inventario:'113435',imobilizado:'415563',localiz:'0016',descLocal:'Fábrica de Farinhas e Gorduras - VDA',dtIncorp:'2010-06-01',nome:'Bomba Netzsch Mod. Nesl 50A',valor:0,status:'Ativo'},
+    {cc:'115',inventario:'133784',imobilizado:'415639',localiz:'0016',descLocal:'Fábrica de Farinhas e Gorduras - VDA',dtIncorp:'2010-06-01',nome:'CARACOL TRANSPORTADOR DE RESIDUOS',valor:0,status:'Ativo'},
+    {cc:'115',inventario:'184021',imobilizado:'410443',localiz:'0016',descLocal:'Fábrica de Farinhas e Gorduras - VDA',dtIncorp:'2010-06-01',nome:'DEPOSITO CAP.7 TON COM AGITADOR C/MOTOR',valor:0,status:'Ativo'},
+    {cc:'115',inventario:'184022',imobilizado:'410444',localiz:'0016',descLocal:'Fábrica de Farinhas e Gorduras - VDA',dtIncorp:'2010-06-01',nome:'DEPOSITO DE INOX CAP.7 TON COM AGITADOR',valor:0,status:'Ativo'},
+    {cc:'115',inventario:'200001',imobilizado:'412345',localiz:'0016',descLocal:'FFG/COE',dtIncorp:'2015-03-15',nome:'PRENSA HIDRAULICA 50 TON METALMECANICA',valor:45000,status:'Ativo'},
+    {cc:'115',inventario:'200002',imobilizado:'412346',localiz:'0016',descLocal:'FFG/COE',dtIncorp:'2015-03-15',nome:'COMPRESSOR DE AR SCHULZ SRP4025',valor:12800,status:'Ativo'},
+    {cc:'115',inventario:'200003',imobilizado:'412347',localiz:'0016',descLocal:'FFG/COE',dtIncorp:'2018-07-20',nome:'BALANÇA INDUSTRIAL 500KG TOLEDO',valor:3200,status:'Ativo'},
+    {cc:'125',inventario:'',imobilizado:'123711',localiz:'0172',descLocal:'Extrusão',dtIncorp:'2010-06-01',nome:'PALETE P45 POLIETILENO 1200X1000MM CAP.1700KG',valor:0,status:'Ativo'},
+    {cc:'125',inventario:'10216',imobilizado:'410933',localiz:'0172',descLocal:'Extrusão',dtIncorp:'2010-06-01',nome:'BOMBA MARCA TRIGLAU PARA GORDURA',valor:0,status:'Ativo'},
+    {cc:'125',inventario:'134244',imobilizado:'449472',localiz:'0172',descLocal:'Extrusão',dtIncorp:'2011-03-19',nome:'UNIDADE DANFOOS - SISTEMA CLIMATIZAÇÃO',valor:670,status:'Ativo'},
+    {cc:'125',inventario:'153394',imobilizado:'422265',localiz:'0172',descLocal:'Extrusão',dtIncorp:'2010-06-01',nome:'LAVADOR DE MÃOS EM AÇO INOX',valor:0,status:'Ativo'},
+    {cc:'125',inventario:'203387',imobilizado:'433658',localiz:'0172',descLocal:'Extrusão',dtIncorp:'2010-06-01',nome:'EXAUSTOR AXIAL DE TELHADO MOD.ET/73',valor:52,status:'Ativo'},
+    {cc:'125',inventario:'206678',imobilizado:'433970',localiz:'0172',descLocal:'Extrusão',dtIncorp:'2010-06-01',nome:'BALANCA DE BANCADA MOD.2090 BAL-240-COE',valor:61,status:'Ativo'},
+    {cc:'125',inventario:'208673',imobilizado:'435082',localiz:'0172',descLocal:'Extrusão',dtIncorp:'2010-06-01',nome:'CUBA DE DESINFECCAO ASPERSAO EM INOX',valor:67,status:'Ativo'},
+    {cc:'125',inventario:'236111',imobilizado:'426154',localiz:'0172',descLocal:'Extrusão',dtIncorp:'2010-06-01',nome:'PERCOLADOR DE PELE EXTRUSADO C/GRELHA AÇO INOX',valor:0,status:'Ativo'},
+    {cc:'125',inventario:'243777',imobilizado:'9025140',localiz:'0172',descLocal:'Extrusão',dtIncorp:'2023-07-31',nome:'DETECTOR DE METAIS PIPELINE FORTRESS PHONTOM',valor:2073,status:'Ativo'},
+    {cc:'138',inventario:'',imobilizado:'419537',localiz:'1859',descLocal:'Estocagem e carregamento Industrializado',dtIncorp:'2010-06-01',nome:'SISTEMA DE EXTINTORES DE INCÊNDIO',valor:234,status:'Ativo'},
+    {cc:'138',inventario:'',imobilizado:'2560510',localiz:'1859',descLocal:'Estocagem e carregamento Industrializado',dtIncorp:'2025-12-31',nome:'AQUISIÇÃO EVAPORADOR ESTOCAGEM 410',valor:118119.17,status:'Ativo'},
+    {cc:'138',inventario:'175248',imobilizado:'425275',localiz:'1859',descLocal:'Estocagem e carregamento Industrializado',dtIncorp:'2010-06-01',nome:'TALHA ELETRICA COM CARRO TROLE MANUAL CAP.1 TON',valor:0,status:'Ativo'},
+    {cc:'138',inventario:'218253',imobilizado:'434318',localiz:'1859',descLocal:'Estocagem e carregamento Industrializado',dtIncorp:'2010-06-01',nome:'MESA P/RECEPÇÃO DE CXS NA CAMARA DE CURADAS',valor:96,status:'Ativo'},
+    {cc:'138',inventario:'218273',imobilizado:'453866',localiz:'1859',descLocal:'Estocagem e carregamento Industrializado',dtIncorp:'2011-10-07',nome:'ENVOLVEDORA DE PALLETS STRONG',valor:16200,status:'Ativo'},
+    {cc:'138',inventario:'236116',imobilizado:'434473',localiz:'1859',descLocal:'Estocagem e carregamento Industrializado',dtIncorp:'2010-06-01',nome:'CORTINA AR CA-2 300X3100MM MADEF',valor:51,status:'Ativo'},
+    {cc:'138',inventario:'243805',imobilizado:'450943',localiz:'1859',descLocal:'Estocagem e carregamento Industrializado',dtIncorp:'2011-04-25',nome:'MAQUINA ENVOLVEDORA STRETCH',valor:17905,status:'Ativo'},
+    {cc:'138',inventario:'244191',imobilizado:'848623',localiz:'1859',descLocal:'Estocagem e carregamento Industrializado',dtIncorp:'2010-09-02',nome:'EMPILHADEIRA ELÉTRICA JUNIOR MCA STILL 8439',valor:6918,status:'Ativo'},
+    {cc:'138',inventario:'322057',imobilizado:'9031713',localiz:'1859',descLocal:'Estocagem e carregamento Industrializado',dtIncorp:'2024-04-30',nome:'IMPRESSORA PORTÁTIL ZM400 TRANSF. TÉRMICA',valor:0,status:'Ativo'},
+    {cc:'165',inventario:'100001',imobilizado:'300001',localiz:'0001',descLocal:'Gerência Unidade VDA',dtIncorp:'2012-01-01',nome:'MESA DIRETORIA MADEIRA NOGAL',valor:2400,status:'Ativo'},
+    {cc:'165',inventario:'100002',imobilizado:'300002',localiz:'0001',descLocal:'Gerência Unidade VDA',dtIncorp:'2012-01-01',nome:'CADEIRA PRESIDENTE COURO PRETO',valor:1800,status:'Ativo'},
+    {cc:'165',inventario:'100003',imobilizado:'300003',localiz:'0001',descLocal:'Gerência Unidade VDA',dtIncorp:'2019-05-10',nome:'NOTEBOOK DELL LATITUDE 5500',valor:5200,status:'Ativo'},
+    {cc:'165',inventario:'100004',imobilizado:'300004',localiz:'0001',descLocal:'Gerência Unidade VDA',dtIncorp:'2019-05-10',nome:'MONITOR LG 24 FULL HD',valor:1200,status:'Ativo'},
+    {cc:'165',inventario:'100005',imobilizado:'300005',localiz:'0001',descLocal:'Gerência Unidade VDA',dtIncorp:'2020-03-15',nome:'TELEFONE IP CISCO SPA504G',valor:450,status:'Ativo'},
+    {cc:'201271071',inventario:'500001',imobilizado:'700001',localiz:'LAB01',descLocal:'Laboratório Industrial VDA',dtIncorp:'2018-04-20',nome:'ESPECTROFOTÔMETRO UV-VIS SHIMADZU',valor:45000,status:'Ativo'},
+    {cc:'201271071',inventario:'500002',imobilizado:'700002',localiz:'LAB01',descLocal:'Laboratório Industrial VDA',dtIncorp:'2018-04-20',nome:'BALANÇA ANALÍTICA QUATRO CASAS METTLER',valor:8500,status:'Ativo'},
+    {cc:'201271071',inventario:'500003',imobilizado:'700003',localiz:'LAB01',descLocal:'Laboratório Industrial VDA',dtIncorp:'2020-08-15',nome:'CENTRÍFUGA REFRIGERADA EPPENDORF',valor:22000,status:'Ativo'},
+    {cc:'201271071',inventario:'500004',imobilizado:'700004',localiz:'LAB01',descLocal:'Laboratório Industrial VDA',dtIncorp:'2021-02-10',nome:'AUTOCLAVE VERTICAL 100L PRISMATEC',valor:15000,status:'Ativo'},
+    {cc:'201271071',inventario:'500005',imobilizado:'700005',localiz:'LAB01',descLocal:'Laboratório Industrial VDA',dtIncorp:'2016-11-30',nome:'PHMETRO DIGITAL BENCH BANTE',valor:3200,status:'Ativo'},
+    {cc:'201450496',inventario:'600001',imobilizado:'800001',localiz:'TI01',descLocal:'IT Services VDA',dtIncorp:'2022-01-10',nome:'SERVIDOR DELL POWEREDGE R740',valor:85000,status:'Ativo'},
+    {cc:'201450496',inventario:'600002',imobilizado:'800002',localiz:'TI01',descLocal:'IT Services VDA',dtIncorp:'2022-01-10',nome:'SWITCH CISCO CATALYST 2960X 48P',valor:12000,status:'Ativo'},
+    {cc:'201450496',inventario:'600003',imobilizado:'800003',localiz:'TI01',descLocal:'IT Services VDA',dtIncorp:'2023-06-20',nome:'FIREWALL FORTINET FORTIGATE 100F',valor:28000,status:'Ativo'},
+    {cc:'201450496',inventario:'600004',imobilizado:'800004',localiz:'TI01',descLocal:'IT Services VDA',dtIncorp:'2021-09-15',nome:'NOBREAK APC SMART 3000VA',valor:5800,status:'Ativo'},
+    {cc:'201450496',inventario:'600005',imobilizado:'800005',localiz:'TI01',descLocal:'IT Services VDA',dtIncorp:'2020-03-10',nome:'ACCESS POINT UBIQUITI UNIFI AP-AC-PRO',valor:1200,status:'Ativo'},
+    {cc:'201450496',inventario:'600006',imobilizado:'800006',localiz:'TI01',descLocal:'IT Services VDA',dtIncorp:'2024-01-05',nome:'NAS SYNOLOGY DS923+ 4BAY',valor:9500,status:'Ativo'},
+    {cc:'150',inventario:'400001',imobilizado:'500001',localiz:'ENRG01',descLocal:'Gestão Energia VDA',dtIncorp:'2015-06-01',nome:'TRANSFORMADOR TRAFO 500KVA 13800/380V',valor:95000,status:'Ativo'},
+    {cc:'150',inventario:'400002',imobilizado:'500002',localiz:'ENRG01',descLocal:'Gestão Energia VDA',dtIncorp:'2015-06-01',nome:'BANCO DE CAPACITORES 150KVAR',valor:18000,status:'Ativo'},
+    {cc:'150',inventario:'400003',imobilizado:'500003',localiz:'ENRG01',descLocal:'Gestão Energia VDA',dtIncorp:'2019-08-20',nome:'MEDIDOR DE ENERGIA DIGIRAIL KRON',valor:4500,status:'Ativo'},
+    {cc:'150',inventario:'400004',imobilizado:'500004',localiz:'ENRG01',descLocal:'Gestão Energia VDA',dtIncorp:'2020-02-14',nome:'GRUPO GERADOR DIESEL 250KVA STEMAC',valor:185000,status:'Ativo'},
+    {cc:'146',inventario:'300001',imobilizado:'400001',localiz:'VPR01',descLocal:'Op. Gerenciamento de Vapor VDA',dtIncorp:'2013-03-10',nome:'CALDEIRA A VAPOR 4000KG/H HOVAL',valor:320000,status:'Ativo'},
+    {cc:'146',inventario:'300002',imobilizado:'400002',localiz:'VPR01',descLocal:'Op. Gerenciamento de Vapor VDA',dtIncorp:'2013-03-10',nome:'BOMBA D AGUA ALIMENTAÇÃO CALDEIRA KSB',valor:12000,status:'Ativo'},
+    {cc:'146',inventario:'300003',imobilizado:'400003',localiz:'VPR01',descLocal:'Op. Gerenciamento de Vapor VDA',dtIncorp:'2017-11-20',nome:'ABRANDADOR AGUA AUTOTROL 255 LOGIX',valor:8500,status:'Ativo'},
+  ];
+  db.assets=raw.map((a,i)=>({...a,id:'smp'+i+Date.now().toString(36),quantFisica:null,createdAt:new Date().toISOString()}));
+  saveDB(); renderAll(); updateCCChips(); populateCCSelects();
+  showToast(`✅ ${db.assets.length} ativos carregados!`,'success');
+  switchTab('dashboard');
+}
+
+// ════════════════════════════════════
+// TOAST
+// ════════════════════════════════════
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show '+type;
+  setTimeout(()=>t.classList.remove('show'),2800);
 }
 </script>
 </body>
